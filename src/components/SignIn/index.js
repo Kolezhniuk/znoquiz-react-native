@@ -3,19 +3,25 @@ import {
     AsyncStorage,
     StyleSheet,
     View,
-    Button
+    Button,
+    ScrollView
 } from 'react-native';
+import Logo from "./logo";
 
 export default class SignInScreen extends React.Component {
     static navigationOptions = {
-        title: 'Please sign in',
+        header: null
     };
 
     render() {
         return (
-            <View style={styles.container}>
-                <Button title="Sign in!" onPress={this._signInAsync} />
-            </View>
+            <ScrollView>
+                <View style={styles.container}>
+                    <Logo/>
+                    {/*<Button title="Sign in!" onPress={this._signInAsync} />*/}
+                </View>
+            </ScrollView>
+
         );
     }
 
@@ -27,7 +33,8 @@ export default class SignInScreen extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#fff',
         alignItems: 'center',
-        justifyContent: 'center',
+        // justifyContent: 'center',
     },
 });
