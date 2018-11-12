@@ -1,0 +1,33 @@
+{
+  "name": "zno",
+  "main": "node_modules/expo/AppEntry.js",
+  "private": true,
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "eject": "expo eject"
+  },
+  "rnpm": {
+    "assets": [
+      "./assets/fonts,"
+    ]
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.1.5",
+    "@expo/vector-icons": "6.2.2",
+    "axios": "^0.18.0",
+    "expo": "^31.0.2",
+    "react": "16.5.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
+    "react-native-vector-icons": "4.5.0",
+    "react-navigation": "^2.18.2",
+    "react-navigation-redux-helpers": "^2.0.8",
+    "react-redux": "^5.1.1",
+    "redux": "^4.0.1",
+    "redux-promise": "^0.6.0"
+  },
+  "devDependencies": {
+    "babel-preset-expo": "^5.0.0"
+  }
+}
