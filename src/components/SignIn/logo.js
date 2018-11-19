@@ -30,29 +30,34 @@ export default class Logo extends React.Component {
                 duration: 500,
                 easing: Easing.poly(3)
             })
-        ]).start(() => alert('done'))
+        ]).start(() => {
+            this.props.showLogin();
+        })
     }
 
     render() {
         return (
             <View>
-                <View style={styles.logo}>
+                <View style={this.props.orientation === 'portrait'
+                    ? styles.logoPortrait : styles.logoLandscape}>
                     <Animated.View
-                    style={{ opacity: this.state.sellAnim, top: this.state.sellAnim.interpolate({
-                            inputRange: [0,1],
-                            outputRange: [100,0]
-                        })
-                    }}
+                        style={{
+                            opacity: this.state.sellAnim, top: this.state.sellAnim.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [100, 0]
+                            })
+                        }}
                     >
                         <Text style={styles.zno}>200</Text>
 
                     </Animated.View>
                     <Animated.View
-                        style={{ opacity: this.state.itAnim, top: this.state.sellAnim.interpolate({
-                                inputRange: [0,1],
-                                outputRange: [100,0]
+                        style={{
+                            opacity: this.state.itAnim, top: this.state.sellAnim.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [100, 0]
                             })
-                        }} >
+                        }}>
                         <Text style={styles.baliv}>baliv</Text>
 
                     </Animated.View>
@@ -62,14 +67,21 @@ export default class Logo extends React.Component {
     }
 }
 const styles = StyleSheet.create({
-    logo: {
+    logoPortrait: {
         marginTop: 50,
         flex: 1,
         flexDirection: 'row',
-        maxHeight: 100,
+        maxHeight:50,
         // justifyContent: 'center',
     },
-    zno:{
+    logoLandscape: {
+        marginTop: 20,
+        flex: 1,
+        flexDirection: 'row',
+        maxHeight: 50,
+        // justifyContent: 'center',
+    },
+    zno: {
         fontSize: 40,
         fontFamily: 'RobotoCondensed-Regular',
         color: '#555'
