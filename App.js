@@ -16,6 +16,7 @@ export default class Root extends React.Component {
         await Font.loadAsync({
             'RobotoCondensed-Regular': require('./assets/fonts/RobotoCondensed-Regular.ttf'),
             'RobotoCondensed-BoldItalic': require('./assets/fonts/RobotoCondensed-BoldItalic.ttf'),
+            'Roboto-Black': require('./assets/fonts/Roboto-Black.ttf'),
         });
         this.setState({ fontLoaded: true });
     }

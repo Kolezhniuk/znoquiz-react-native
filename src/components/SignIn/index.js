@@ -6,7 +6,7 @@ import {
     ScrollView
 } from 'react-native';
 import Logo from "./logo";
-import {getOrientation, getPLatform, removeOrientationListener, setOrientationListener} from "../../utils/misc/misc";
+import {getOrientation, getPlatform, removeOrientationListener, setOrientationListener} from "../../utils/misc/misc";
 import LoinPanel from "./loginPanel";
 import LoginForm from "./loginForm";
 
@@ -18,7 +18,7 @@ export default class SignInScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            platform: getPLatform(),
+            platform: getPlatform(),
             orientation: getOrientation(500),
             logoAnimation: false
         };

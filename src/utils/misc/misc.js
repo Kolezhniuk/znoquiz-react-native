@@ -15,9 +15,9 @@ export const removeOrientationListener = (cb) => {
 export const WIDTH = () => Dimensions.get('window').width;
 export const HEIGHT = () => Dimensions.get('window').height;
 
-export const getPLatform = () => {
+export const getPlatform = () => {
     if (Platform.OS === "ios") {
         return 'ios';
     }
     return 'android';
-}
+};

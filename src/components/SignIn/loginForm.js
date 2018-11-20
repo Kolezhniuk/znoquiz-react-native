@@ -1,10 +1,14 @@
 import React from 'react';
-import {StyleSheet, View, Button} from 'react-native';
+import {StyleSheet, View, Text, Button} from 'react-native';
 import Input from '../../utils/forms/inputs'
+import ValidationRules from '../../utils/forms/validationRules';
 
 export default class LoginForm extends React.Component {
 
     state = {
+        type: 'Login',
+        action: 'Login',
+        actionMode: 'Not a user, Register',
         hasErrors: false,
         form: {
             email: {
@@ -12,6 +16,7 @@ export default class LoginForm extends React.Component {
                 valid: false,
                 type: 'textinput',
                 rules: {
+                    isRequired: true,
                     isEmail: true
                 }
             },
@@ -20,6 +25,7 @@ export default class LoginForm extends React.Component {
                 valid: false,
                 type: 'password',
                 rules: {
+                    isRequired: true,
                     minLength: 6
                 }
             },
@@ -32,6 +38,60 @@ export default class LoginForm extends React.Component {
                 }
             }
         }
+    };
+    onChangeFormType = () => {
+        const type = this.state.type;
+        this.setState({
+            type: type === 'Login' ? 'Register' : 'Login',
+            action: type === 'Login' ? 'Register' : 'Login',
+            actionMode: type === 'Login' ? 'Not registered Login' : 'Not a user, Register'
+        })
+    };
+
+    confirmPassword = () => {
+        return this.state.type !== 'Login' ?
+            (<Input
+                placeholder="Confirm password"
+                value={this.state.form.confirmPassword.value}
+                type={this.state.form.confirmPassword.type}
+                keyboardType={"email-address"}
+                autoCapitalization={"none"}
+                onChangeText={(value) => this.updateInput('confirmPassword', value)}
+                secureTextEntry
+            />)
+            : null;
+    };
+
+    formHasErrors = () => {
+        return this.state.hasErrors ?
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorLabel}> PLease check your info </Text>
+            </View>
+            : null;
+    };
+
+    submitUser = () => {
+        let isFormValid = true;
+        let formToSubmit = {};
+        const formCopy = this.state.form;
+        for (let key in formCopy) {
+            if (this.state.type === 'Login') {
+                if (key !== 'confirmPassword') {
+                    isFormValid = isFormValid && formCopy[key].valid;
+                    formToSubmit[key] = formCopy[key].value;
+                }
+            } else {
+                isFormValid = isFormValid && formCopy[key].valid;
+                formToSubmit[key] = formCopy[key].value;
+            }
+        }
+
+        if (isFormValid) {
+
+        } else {
+            this.setState({hasErrors: true});
+        }
+
     };
 
     render() {
@@ -54,23 +114,29 @@ export default class LoginForm extends React.Component {
                     onChangeText={(value) => this.updateInput('password', value)}
                     secureTextEntry
                 />
-                <View style = {
+
+                {this.confirmPassword()}
+                {this.formHasErrors()}
+
+
+                <View style={
                     this.props.platform === 'ios' ? styles.buttonStyleIOS : styles.buttonStyleAndroid
                 }>
                     <Button
-                        title="Login"
+                        title={this.state.action}
                         color="#fd9727"
-                        onPress={()=> alert('lert')}
+                        onPress={this.submitUser}
                     />
                 </View>
 
-                <View style = {
+
+                <View style={
                     this.props.platform === 'ios' ? styles.buttonStyleIOS : styles.buttonStyleAndroid
                 }>
                     <Button
-                        title="Register"
+                        title={this.state.actionMode}
                         color="#fd9727"
-                        onPress={()=> alert('lert')}
+                        onPress={this.onChangeFormType}
                     />
                 </View>
 
@@ -81,7 +147,14 @@ export default class LoginForm extends React.Component {
     updateInput(name, value) {
         this.setState({hasErrors: false});
         let formCopy = this.state.form;
+
         formCopy[name].value = value;
+
+        let rules = formCopy[name].rules;
+        let valid = ValidationRules(value, rules, formCopy);
+        formCopy[name].valid = valid;
+        console.log(valid);
+
         this.setState({form: formCopy});
     }
 }
@@ -90,10 +163,20 @@ const styles = StyleSheet.create({
         minHeight: 400,
         // justifyContent: 'center',
     },
-    buttonStyleAndroid:{
+    buttonStyleAndroid: {
+        marginBottom: 5,
+        marginTop: 15
 
     },
-    buttonStyleIOS:{
-
+    buttonStyleIOS: {
+        marginBottom: 5,
+        marginTop: 15
+    },
+    errorContainer : {
+        marginBottom: 20,
+        marginTop: 10
+    },
+    errorLabel: {
+        fontFamily: 'Roboto-Black'
     }
 });
