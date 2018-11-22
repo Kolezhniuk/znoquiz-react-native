@@ -2,8 +2,12 @@ import React from 'react';
 import {StyleSheet, View, Text, Button} from 'react-native';
 import Input from '../../utils/forms/inputs'
 import ValidationRules from '../../utils/forms/validationRules';
+import {connect} from 'react-redux';
+import {signUp} from '../../strore/actions/user_actions';
+import {bindActionCreators} from 'redux';
 
-export default class LoginForm extends React.Component {
+
+class LoginForm extends React.Component {
 
     state = {
         type: 'Login',
@@ -23,7 +27,7 @@ export default class LoginForm extends React.Component {
             password: {
                 value: '',
                 valid: false,
-                type: 'password',
+                type: 'textinput',
                 rules: {
                     isRequired: true,
                     minLength: 6
@@ -34,7 +38,8 @@ export default class LoginForm extends React.Component {
                 valid: false,
                 type: 'textinput',
                 rules: {
-                    confirmPass: "password"
+                    isRequired: true,
+                    confirmPass: 'password'
                 }
             }
         }
@@ -51,11 +56,11 @@ export default class LoginForm extends React.Component {
     confirmPassword = () => {
         return this.state.type !== 'Login' ?
             (<Input
-                placeholder="Confirm password"
+                placeholder='Confirm password'
                 value={this.state.form.confirmPassword.value}
                 type={this.state.form.confirmPassword.type}
-                keyboardType={"email-address"}
-                autoCapitalization={"none"}
+                keyboardType={'email-address'}
+                autoCapitalization={'none'}
                 onChangeText={(value) => this.updateInput('confirmPassword', value)}
                 secureTextEntry
             />)
@@ -71,12 +76,13 @@ export default class LoginForm extends React.Component {
     };
 
     submitUser = () => {
+        console.log('submit');
         let isFormValid = true;
         let formToSubmit = {};
         const formCopy = this.state.form;
-        for (let key in formCopy) {
-            if (this.state.type === 'Login') {
-                if (key !== 'confirmPassword') {
+        for(let key in formCopy){
+            if(this.state.type === 'Login'){
+                if(key !== 'confirmPassword'){
                     isFormValid = isFormValid && formCopy[key].valid;
                     formToSubmit[key] = formCopy[key].value;
                 }
@@ -86,29 +92,42 @@ export default class LoginForm extends React.Component {
             }
         }
 
+
+        console.log('isFormValid', isFormValid);
         if (isFormValid) {
 
+            if (this.state.type === 'Login') {
+
+            } else {
+                this.props.signUp(formToSubmit)
+                    .then(() => console.log('succesfull'));
+            }
         } else {
+            console.log("invalid");
             this.setState({hasErrors: true});
         }
 
     };
+
+    componentWillReceiveProps(nextProps) {
+
+    }
 
     render() {
         return (
             <View style={styles.formInputContainer}>
 
                 <Input
-                    placeholder="Email"
+                    placeholder='Email'
                     value={this.state.form.email.value}
                     type={this.state.form.email.type}
-                    keyboardType={"email-address"}
-                    autoCapitalization={"none"}
+                    keyboardType={'email-address'}
+                    autoCapitalization={'none'}
                     onChangeText={(value) => this.updateInput('email', value)}
                 />
 
                 <Input
-                    placeholder="Password"
+                    placeholder='Password'
                     value={this.state.form.password.value}
                     type={this.state.form.password.type}
                     onChangeText={(value) => this.updateInput('password', value)}
@@ -124,7 +143,7 @@ export default class LoginForm extends React.Component {
                 }>
                     <Button
                         title={this.state.action}
-                        color="#fd9727"
+                        color='#fd9727'
                         onPress={this.submitUser}
                     />
                 </View>
@@ -135,7 +154,7 @@ export default class LoginForm extends React.Component {
                 }>
                     <Button
                         title={this.state.actionMode}
-                        color="#fd9727"
+                        color='#fd9727'
                         onPress={this.onChangeFormType}
                     />
                 </View>
@@ -158,6 +177,7 @@ export default class LoginForm extends React.Component {
         this.setState({form: formCopy});
     }
 }
+
 const styles = StyleSheet.create({
     formInputContainer: {
         minHeight: 400,
@@ -172,11 +192,26 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         marginTop: 15
     },
-    errorContainer : {
+    errorContainer: {
         marginBottom: 20,
         marginTop: 10
     },
     errorLabel: {
-        fontFamily: 'Roboto-Black'
+        fontFamily: 'Roboto-Black',
+        color: '#f00'
     }
 });
+
+function mapStateToProps(state) {
+    return {
+
+        User: state.user
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({signUp}, dispatch);
+}
+
+export default connect(mapDispatchToProps, mapDispatchToProps)(LoginForm)
+
