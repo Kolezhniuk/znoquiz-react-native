@@ -3,47 +3,54 @@ import {StyleSheet, View, Text, Button} from 'react-native';
 import Input from '../../utils/forms/inputs'
 import ValidationRules from '../../utils/forms/validationRules';
 import {connect} from 'react-redux';
-import {signUp} from '../../strore/actions/user_actions';
+import {signUp, signIn} from '../../strore/actions/user_actions';
 import {bindActionCreators} from 'redux';
+import {getTokens, setTokens} from "../../utils/misc/misc";
 
 
 class LoginForm extends React.Component {
-
-    state = {
-        type: 'Login',
-        action: 'Login',
-        actionMode: 'Not a user, Register',
-        hasErrors: false,
-        form: {
-            email: {
-                value: '',
-                valid: false,
-                type: 'textinput',
-                rules: {
-                    isRequired: true,
-                    isEmail: true
-                }
-            },
-            password: {
-                value: '',
-                valid: false,
-                type: 'textinput',
-                rules: {
-                    isRequired: true,
-                    minLength: 6
-                }
-            },
-            confirmPassword: {
-                value: '',
-                valid: false,
-                type: 'textinput',
-                rules: {
-                    isRequired: true,
-                    confirmPass: 'password'
+    constructor(props) {
+        super(props);
+        // this.onChangeFormType = this.onChangeFormType.bind(this);
+        // this.confirmPassword = this.confirmPassword.bind(this);
+        // this.submitUser = this.submitUser.bind(this);
+        this.state = {
+            type: 'Login',
+            action: 'Login',
+            actionMode: 'Not a user, Register',
+            hasErrors: false,
+            form: {
+                email: {
+                    value: '',
+                    valid: false,
+                    type: 'textinput',
+                    rules: {
+                        isRequired: true,
+                        isEmail: true
+                    }
+                },
+                password: {
+                    value: '',
+                    valid: false,
+                    type: 'textinput',
+                    rules: {
+                        isRequired: true,
+                        minLength: 6
+                    }
+                },
+                confirmPassword: {
+                    value: '',
+                    valid: false,
+                    type: 'textinput',
+                    rules: {
+                        isRequired: true,
+                        confirmPass: 'password'
+                    }
                 }
             }
-        }
-    };
+        };
+    }
+
     onChangeFormType = () => {
         const type = this.state.type;
         this.setState({
@@ -70,19 +77,31 @@ class LoginForm extends React.Component {
     formHasErrors = () => {
         return this.state.hasErrors ?
             <View style={styles.errorContainer}>
-                <Text style={styles.errorLabel}> PLease check your info </Text>
+                <Text style={styles.errorLabel}> Please check your info </Text>
             </View>
             : null;
     };
-
+    manageAccess = () => {
+        if (!this.props.User.userData.uid) {
+            this.setState({hasErrors: true});
+        } else {
+            //store data in phone
+            setTokens(this.props.User.userData, () => {
+                console.log("works");
+                this.setState({hasErrors: false});
+                console.log(this.props, 'props');
+                this.props.navigation.navigate('App');
+            });
+        }
+    };
     submitUser = () => {
         console.log('submit');
         let isFormValid = true;
         let formToSubmit = {};
         const formCopy = this.state.form;
-        for(let key in formCopy){
-            if(this.state.type === 'Login'){
-                if(key !== 'confirmPassword'){
+        for (let key in formCopy) {
+            if (this.state.type === 'Login') {
+                if (key !== 'confirmPassword') {
                     isFormValid = isFormValid && formCopy[key].valid;
                     formToSubmit[key] = formCopy[key].value;
                 }
@@ -92,15 +111,21 @@ class LoginForm extends React.Component {
             }
         }
 
-
-        console.log('isFormValid', isFormValid);
         if (isFormValid) {
-
             if (this.state.type === 'Login') {
-
+                this.props.signIn(formToSubmit).payload
+                    .then((data) => {
+                            this.mapDataToUser(data);
+                            this.manageAccess();
+                            console.log(this.props.User, 'sign in User');
+                        }
+                    );
             } else {
-                this.props.signUp(formToSubmit)
-                    .then(() => console.log('succesfull'));
+                this.props.signUp(formToSubmit).then((data) => {
+                        this.mapDataToUser(data);
+                        console.log(this.props.User, 'Register User');
+                    }
+                );
             }
         } else {
             console.log("invalid");
@@ -109,8 +134,10 @@ class LoginForm extends React.Component {
 
     };
 
-    componentWillReceiveProps(nextProps) {
-
+    componentDidMount() {
+        getTokens((values) => {
+            console.log(values, 'values');
+        });
     }
 
     render() {
@@ -172,9 +199,13 @@ class LoginForm extends React.Component {
         let rules = formCopy[name].rules;
         let valid = ValidationRules(value, rules, formCopy);
         formCopy[name].valid = valid;
-        console.log(valid);
-
         this.setState({form: formCopy});
+    }
+
+    mapDataToUser(data) {
+        this.props.User.userData.uid = data.localId;
+        this.props.User.userData.token = data.idToken;
+        this.props.User.userData.refToken = data.refreshToken;
     }
 }
 
@@ -202,16 +233,19 @@ const styles = StyleSheet.create({
     }
 });
 
+//needed for redux
+
+
 function mapStateToProps(state) {
     return {
-
-        User: state.user
-    };
+        User: state.User,
+    }
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({signUp}, dispatch);
+    return bindActionCreators({signUp, signIn}, dispatch);
 }
 
-export default connect(mapDispatchToProps, mapDispatchToProps)(LoginForm)
+// export default LoginForm;
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);
 

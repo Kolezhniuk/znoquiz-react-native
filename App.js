@@ -1,12 +1,30 @@
 import React from "react";
 import { Font } from 'expo';
-import {Provider} from "react-redux";
-import store from "./src/strore/reducers/store";
-import AppWithNavigationState from "./src/strore/config";
+import {connect, Provider} from "react-redux";
 import {StyleSheet, ActivityIndicator, StatusBar, View} from "react-native";
+import {createReactNavigationReduxMiddleware, reduxifyNavigator} from "react-navigation-redux-helpers";
+import appNavigator from "./src/components/Navigation";
+import {applyMiddleware, createStore} from "redux";
+import rootReducer from "./src/strore/reducers/reducers";
 
 
 
+const middleware = createReactNavigationReduxMiddleware(
+    "root",
+    state => state.nav,
+);
+
+const App = reduxifyNavigator(appNavigator, "root");
+
+const mapStateToProps = (state) => ({
+    state: state.nav,
+});
+const AppWithNavigationState = connect(mapStateToProps)(App);
+
+const store = createStore(
+    rootReducer,
+    applyMiddleware(middleware),
+);
 
 export default class Root extends React.Component {
     state = {

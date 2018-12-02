@@ -38,9 +38,9 @@ export default class SignInScreen extends React.Component {
                     {/*<Button title="Sign in!" onPress={this._signInAsync} />*/}
                     <LoinPanel
                         orientation={this.state.orientation}
-                        show = { this.state.logoAnimation}
+                        show={this.state.logoAnimation}
                     />
-                    <LoginForm platform = {this.state.platform} />
+                    <LoginForm platform={this.state.platform} navigation={this.props.navigation}/>
                 </View>
             </ScrollView>
 

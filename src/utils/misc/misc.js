@@ -6,8 +6,12 @@ export const HEIGHT = () => Dimensions.get('window').height;
 
 
 export const API_KEY = "AIzaSyDHZESHf4tMdk9AnCyYi0qazBE-gEV72J4";
-
 export const SIGNUP = `https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=${API_KEY}`;
+export const SIGNIN = `https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=${API_KEY}`;
+export const REFRESH = `https://securetoken.googleapis.com/v1/token?key=${API_KEY}`;
+export const FIREBASEURL = 'https://sellitup-beca2.firebaseio.com/';
+
+
 export const getOrientation = (value) => {
     return Dimensions.get("window").height > value ? "portrait" : "landscape";
 };
@@ -30,10 +34,10 @@ export const getPlatform = () => {
 
 export const getTokens = (cb) => {
     AsyncStorage.multiGet([
-        '@sellItApp@token',
-        '@sellItApp@refreshToken',
-        '@sellItApp@expireToken',
-        '@sellItApp@uid'
+        '@znoApp@token',
+        '@znoApp@refreshToken',
+        '@znoApp@expireToken',
+        '@znoApp@uid'
     ]).then(value => {
         cb(value);
     });
@@ -46,10 +50,10 @@ export const setTokens = (values, cb) => {
     const expiration = dateNow.getTime() + (900 * 1000);
 
     AsyncStorage.multiSet([
-        ['@sellItApp@token', values.token],
-        ['@sellItApp@refreshToken', values.refToken],
-        ['@sellItApp@expireToken', expiration.toString()],
-        ['@sellItApp@uid', values.uid]
+        ['@znoApp@token', values.token],
+        ['@znoApp@refreshToken', values.refToken],
+        ['@znoApp@expireToken', expiration.toString()],
+        ['@znoApp@uid', values.uid]
     ]).then(response => {
         cb();
     });

@@ -4,9 +4,18 @@ import Home from "../Home";
 import {createBottomTabNavigator, createStackNavigator, createSwitchNavigator} from "react-navigation";
 import {Ionicons} from "@expo/vector-icons";
 import SignInScreen from "../SignIn";
-import AuthLoadingScreen from "../AuthLoading"; // 6.2.2
+import AuthLoadingScreen from "../AuthLoading";
+import HistoryQuiz from "../HistoryQuiz";
+import PlayQuiz from "../PlayQuiz"; // 6.2.2
 
-const AuthStack = createStackNavigator({ SignIn: SignInScreen });
+const AuthStack = createStackNavigator({SignIn: SignInScreen});
+const HistoryStack = createStackNavigator({
+    HistoryQuiz: HistoryQuiz,
+});
+
+const HistoryStack1 = createStackNavigator({
+    HistoryQuiz1: PlayQuiz,
+});
 
 
 const BottomNavigator = createBottomTabNavigator({
@@ -38,14 +47,17 @@ const BottomNavigator = createBottomTabNavigator({
     }
 );
 
-const appNavigator =  createSwitchNavigator(
+const appNavigator = createSwitchNavigator(
     {
         AuthLoading: AuthLoadingScreen,
         App: BottomNavigator,
         Auth: AuthStack,
+        HistoryQuiz: HistoryStack,
+        HistoryQuiz1: HistoryStack1
     },
     {
         initialRouteName: 'AuthLoading',
     }
 );
+
 export default appNavigator;

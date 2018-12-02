@@ -7,12 +7,11 @@ const validation = (value, rules, form) => {
             case "isRequired":
                 valid = valid && validateRequired(value);
                 break;
-
             case "isEmail":
                 valid = valid && validateEmail(value);
                 break;
             case "minLength":
-                valid = valid && validateMinLength(value);
+                valid = valid && validateMinLength(value, rules[rule]);
                 break;
             case "confirmPass":
                 valid = valid && validateConfirmPass(value, form[rules.confirmPass].value);
@@ -33,7 +32,9 @@ const validateEmail = (email) => {
     return temp.test(String(email).toLowerCase());
 };
 
-const validateMinLength = (value, length) => value.length >= length;
+const validateMinLength = (value, ruleVal) => {
+    return value.length <= ruleVal;
+};
 
 const validateConfirmPass = (value, compareVal) => value === compareVal;
 
